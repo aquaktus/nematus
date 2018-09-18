@@ -31,7 +31,8 @@ def translate(sess, model, config, input_file, output_file=sys.stdin,
 
     n_sent = 0
     try:
-        batches, idxs = read_all_lines(config, input_file.readlines())
+        batches, idxs = read_all_lines(config, input_file.readlines(),
+                                       batch_size)
     except exception.Error as x:
         logging.error(x.msg)
         sys.exit(1)
@@ -45,7 +46,7 @@ def translate(sess, model, config, input_file, output_file=sys.stdin,
                 break
             idx, x = job
             y_dummy = numpy.zeros(shape=(len(x),1))
-            x, x_mask, _, _ = prepare_data(x, y_dummy, maxlen=None)
+            x, x_mask, _, _ = prepare_data(x, y_dummy, config.factors, maxlen=None)
             try:
                 samples = model.beam_search(sess, x, x_mask, config.beam_size)
                 out_queue.put((idx, samples))
