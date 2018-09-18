@@ -23,7 +23,8 @@ from nmt import init_or_restore_variables, load_dictionaries, read_all_lines
 import exception
 
 
-def translate(sess, model, config, input_file, output_file=sys.stdin):
+def translate(sess, model, config, input_file, output_file=sys.stdin,
+              batch_size=80):
     start_time = time.time()
     _, _, _, num_to_target = load_dictionaries(config)
     logging.info("NOTE: Length of translations is capped to {}".format(config.translation_maxlen))
@@ -117,6 +118,7 @@ class Translator(object):
         self._num_processes = settings.num_processes
         self._verbose = settings.verbose
         self._retrieved_translations = defaultdict(dict)
+        self._batch_size = settings.b
 
         # load model options
         self._load_model_options()
@@ -162,7 +164,7 @@ class Translator(object):
         """
         """
         translate(self.sess, self.models[0], self._options[0], input_file,
-                  output_file)
+                  output_file, self._batch_size)
 
 
 def main(input_file, output_file, translation_settings):
