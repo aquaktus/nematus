@@ -100,7 +100,7 @@ def init_or_restore_variables(config, sess, ensemble_scope=None, train=False):
     # load prior model
     if train and config.prior_model != None:
         load_prior(config, sess, saver)
-    
+
     # initialize or restore model
     if reload_filename == None:
         logging.info('Initializing model parameters from scratch...')
@@ -121,7 +121,7 @@ def init_or_restore_variables(config, sess, ensemble_scope=None, train=False):
 def load_prior(config, sess, saver):
      logging.info('Loading prior model parameters from file ' + os.path.abspath(config.prior_model))
      saver.restore(sess, os.path.abspath(config.prior_model))
-     
+
      # fill prior variables with the loaded values
      prior_variables = tf.get_collection_ref('prior_variables')
      prior_variables_dict = dict([(v.name, v) for v in prior_variables])
@@ -264,6 +264,16 @@ def train(config, sess):
     for progress.eidx in xrange(progress.eidx, config.max_epochs):
         logging.info('Starting epoch {0}'.format(progress.eidx))
         for source_sents, target_sents in text_iterator:
+            print("")
+            print("")
+            print("")
+            print("########## Source Sents ############")
+            print(source_sents)
+            print("")
+            print("")
+            print("")
+            print("########## Target Sents ############")
+            print(target_sents)
             if len(source_sents[0][0]) != config.factors:
                 logging.error('Mismatch between number of factors in settings ({0}), and number in training corpus ({1})\n'.format(config.factors, len(source_sents[0][0])))
                 sys.exit(1)
@@ -534,9 +544,9 @@ def parse_args():
 
     data = parser.add_argument_group('data sets; model loading and saving')
 
-    data.add_argument('--source_dataset', type=str, metavar='PATH', 
+    data.add_argument('--source_dataset', type=str, metavar='PATH',
                          help="parallel training corpus (source)")
-    data.add_argument('--target_dataset', type=str, metavar='PATH', 
+    data.add_argument('--target_dataset', type=str, metavar='PATH',
                          help="parallel training corpus (target)")
     # parallel training corpus (source and target). Hidden option for backward compatibility
     data.add_argument('--datasets', type=str, metavar='PATH', nargs=2,
@@ -551,7 +561,7 @@ def parse_args():
                          help="load existing model from this path. Set to \"latest_checkpoint\" to reload the latest checkpoint in the same directory of --saveto")
     data.add_argument('--no_reload_training_progress', action='store_false',  dest='reload_training_progress',
                          help="don't reload training progress (only used if --reload is enabled)")
-    data.add_argument('--summary_dir', type=str, required=False, metavar='PATH', 
+    data.add_argument('--summary_dir', type=str, required=False, metavar='PATH',
                          help="directory for saving summaries (default: same directory as the --saveto file)")
     data.add_argument('--summaryFreq', type=int, default=0, metavar='INT',
                          help="Save summaries after INT updates, if 0 do not save summaries (default: %(default)s)")
@@ -631,7 +641,7 @@ def parse_args():
                          help="label smoothing (default: %(default)s)")
     training.add_argument('--no_shuffle', action="store_false", dest="shuffle_each_epoch",
                          help="disable shuffling of training data (for each epoch)")
-    training.add_argument('--keep_train_set_in_memory', action="store_true", 
+    training.add_argument('--keep_train_set_in_memory', action="store_true",
                          help="Keep training dataset lines stores in RAM during training")
     training.add_argument('--no_sort_by_length', action="store_false", dest="sort_by_length",
                          help='do not sort sentences in maxibatch by length')
@@ -642,7 +652,7 @@ def parse_args():
                          help="optimizer (default: %(default)s)")
 
     validation = parser.add_argument_group('validation parameters')
-    validation.add_argument('--valid_source_dataset', type=str, default=None, metavar='PATH', 
+    validation.add_argument('--valid_source_dataset', type=str, default=None, metavar='PATH',
                          help="source validation corpus (default: %(default)s)")
     validation.add_argument('--valid_target_dataset', type=str, default=None, metavar='PATH',
                          help="target validation corpus (default: %(default)s)")
